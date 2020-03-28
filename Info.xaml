@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:Notifications"
         mc:Ignorable="d"
         Title="Info" Height="450" Width="800" WindowStartupLocation="CenterScreen" Topmost="True">
+    <Window.Background>
+        <ImageBrush/>
+    </Window.Background>
     <Grid>
-        
+
     </Grid>
 </Window>

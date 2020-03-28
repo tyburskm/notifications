@@ -17,5 +17,6 @@ namespace Notifications.Models
         public int Width { get; set; }
         public int Height { get; set; }
         public bool Autosize { get; set; }
+        public string Gradient { get; set; }
     }
 }

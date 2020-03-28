@@ -242,6 +242,7 @@ namespace Notifications
                         TextColor = x.Field<string>("TextColor"),
                         Maximized = x.Field<bool>("Maximized"),
                         Width = x.Field<int>("Width"),
+                        Gradient = x.Field<string>("Gradient")
                     }).First();
 
                 }
