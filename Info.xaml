@@ -10,6 +10,10 @@
         <ImageBrush/>
     </Window.Background>
     <Grid>
+        <Viewbox Stretch="Uniform">
+            <TextBlock x:Name="NotificationText" TextWrapping="Wrap" Text="TextBlock" Margin="20" Panel.ZIndex="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Viewbox>
+        
 
     </Grid>
 </Window>

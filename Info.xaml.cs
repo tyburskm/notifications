@@ -57,6 +57,12 @@ namespace Notifications
 
             }
 
+            if (parameters.Width > 0)
+                Width = parameters.Width;
+
+            if (parameters.Height > 0)
+                Height = parameters.Width;
+
             if (parameters.BgImage.Length > 0)
             {
                 try
@@ -81,12 +87,10 @@ namespace Notifications
 
             }
 
-
-            if (parameters.Width > 0)
-                Width = parameters.Width;
-
-            if (parameters.Height > 0)
-                Height = parameters.Width;
+            if (parameters.NotificationText.Length > 0)
+            {
+                NotificationText.Text = parameters.NotificationText;
+            }
 
             
 

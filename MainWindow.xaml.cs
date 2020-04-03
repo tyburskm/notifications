@@ -29,13 +29,15 @@ namespace Notifications
     public partial class MainWindow : Window
     {
         DispatcherTimer _mainTimer;
-        private static string _cachePath = "c:\\temp\\.n_it_2020_c";
+        System.Timers.Timer _onlineStatusTimer;
+        private string _cachePath = "c:\\temp\\.n_it_2020_c";
         private string _cs = string.Empty;
         private List<RunningTimers> _runningTimers;
         private Logs _logger;
         private string _machineName;
         private int _errorCount = 0;
         private bool _firstRun = true;
+        private bool _offlineMode = false;
 
         public MainWindow()
         {
@@ -45,10 +47,18 @@ namespace Notifications
             if (GetConfig())
             {
                 _mainTimer = new DispatcherTimer();
-                _mainTimer.Interval = TimeSpan.FromSeconds(5);
+                _mainTimer.Interval = TimeSpan.FromSeconds(10);
                 _mainTimer.Tick += _mainTimer_Tick;
                 _runningTimers = new List<RunningTimers>();
                 _mainTimer.Start();
+
+                _onlineStatusTimer = new System.Timers.Timer(60000);
+                //_onlineStatusTimer.Interval = TimeSpan.FromSeconds(60);
+#if DEBUG
+                _onlineStatusTimer = new System.Timers.Timer(10000);
+#endif
+                _onlineStatusTimer.Elapsed += CheckIfOnline;
+                _onlineStatusTimer.Start();
             }
             else
                 Close();
@@ -60,6 +70,17 @@ namespace Notifications
             try
             {
                 _mainTimer.IsEnabled = false;
+
+                if (_errorCount >= 10)
+                {
+                    foreach (var runningTimer in _runningTimers)
+                    {
+                        runningTimer.Timer.Stop();
+                    }
+                    _runningTimers.Clear();
+                    Close();
+                }
+
                 var notifications = GetNotifications();
 
                 if (notifications != null)
@@ -78,16 +99,17 @@ namespace Notifications
                     var executed = File.ReadAllText(_cachePath);
                     foreach (var notification in notifications)
                     {
-                        if (executed.Length > 0 && executed.Split(';').Contains(notification.Id.ToString()) && !_firstRun)
+                        if (executed.Length > 0 && executed.Split(';').Contains(notification.Id.ToString()) && !_firstRun && 
+                            _runningTimers.Any(x => x.NotificationId == notification.Id))
                         {
                             if (notification.ValidTo < DateTime.Now)
                             {
-                                _runningTimers.FirstOrDefault(x => x.NotificationId == notification.Id)?.Timer.Stop();
+                                _runningTimers.First(x => x.NotificationId == notification.Id).Timer.Stop();
                             }
                         }
                         else
                         {
-                            var notificationParams = GetParameters(notification.Id);
+                            var notificationParams = notification.Parameters?? GetParameters(notification.Id);
                             if (notificationParams == null)
                                 continue;
 
@@ -106,6 +128,14 @@ namespace Notifications
                                     NotificationId = notification.Id
                                 });
 
+                            }
+                            else
+                            {
+                                _runningTimers.Add(new RunningTimers()
+                                {
+                                    Timer = new DispatcherTimer(),
+                                    NotificationId = notification.Id
+                                });
                             }
                             if (!executed.Split(';').Contains(notification.Id.ToString()))
                             {
@@ -180,7 +210,9 @@ namespace Notifications
                 if (!DatabaseHandler.CheckConnection(_cs))
                 {
                     _logger.LogEvent(_machineName, "Cannot connect to the database", EventLogEntryType.Error, true);
-                    return false;
+                    _offlineMode = true;
+
+
                 }
 
                 return true;
@@ -193,32 +225,76 @@ namespace Notifications
 
         }
 
-        private IEnumerable<Models.Notificarion> GetNotifications()
+        private void CheckIfOnline(object sender, EventArgs e)
+        {
+            _onlineStatusTimer.Enabled = false;
+            if (DatabaseHandler.CheckConnection(_cs))
+            {
+                if (_offlineMode)
+                {
+                    _firstRun = true;
+                    foreach (var runningTimer in _runningTimers)
+                    {
+                        runningTimer.Timer.Stop();
+                    }
+                    _runningTimers.Clear();
+                }
+                _offlineMode = false;
+            }
+            else
+            {
+                _offlineMode = true;
+            }
+            _onlineStatusTimer.Enabled = true;
+        }
+
+        private IEnumerable<Models.Notification> GetNotifications()
         {
             try
             {
-                var db = new DatabaseHandler(_cs);
-                var data = db.GetData("sp_GetActiveNotifications");
-                if (data.Rows.Count > 0)
+                if (_offlineMode)
                 {
-                    return data.AsEnumerable().Select(x => new Notificarion()
-                    {
-                        Id = x.Field<int>("Id"),
-                        Name = x.Field<string>("Name"),
-                        ValidFrom = x.Field<DateTime>("ValidFrom"),
-                        ValidTo = x.Field<DateTime>("ValidTo"),
-                        Repeat = x.Field<int>("Repeat")
-                    });
+                    return new OfflineMode().GetNotifications();
                 }
                 else
                 {
-                    return null;
+                    var db = new DatabaseHandler(_cs);
+                    var data = db.GetData("sp_GetActiveNotifications");
+                    if (data.Rows.Count > 0)
+                    {
+                        var results =  data.AsEnumerable().Select(x => new Notification()
+                        {
+                            Id = x.Field<int>("Id"),
+                            Name = x.Field<string>("Name"),
+                            ValidFrom = x.Field<DateTime>("ValidFrom"),
+                            ValidTo = x.Field<DateTime>("ValidTo"),
+                            Repeat = x.Field<int>("Repeat")
+                        });
+
+                        if (_firstRun)
+                        {
+                            results = results.Select((x) =>
+                            {
+                                x.Parameters = GetParameters(x.Id);
+                                return x;
+                            });
+                            new OfflineMode().SaveLocally(results.ToArray());
+                        }
+
+                        return results;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
+
             }
             catch (Exception e)
             {
                 _logger.LogEvent(_machineName, $"Cannot get notifications due to {e.Message}", EventLogEntryType.Warning);
                 _errorCount++;
+                _offlineMode = true;
                 return null;
             }
         }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Notifications.Models
 {
+    [Serializable]
     public class Parameters
     {
         public string Title { get; set; }
