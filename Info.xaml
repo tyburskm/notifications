@@ -6,7 +6,14 @@
         xmlns:local="clr-namespace:Notifications"
         mc:Ignorable="d"
         Title="Info" Height="450" Width="800" WindowStartupLocation="CenterScreen" Topmost="True">
+    <Window.Background>
+        <ImageBrush/>
+    </Window.Background>
     <Grid>
+        <Viewbox Stretch="Uniform">
+            <TextBlock x:Name="NotificationText" TextWrapping="Wrap" Text="TextBlock" Margin="20" Panel.ZIndex="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Viewbox>
         
+
     </Grid>
 </Window>

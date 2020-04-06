@@ -1,0 +1,95 @@
+﻿@model IEnumerable<NotificationsWeb.Models.Parameters>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NotificationId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NotificationText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BackgroundColor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BackgroundImage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TextColor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Maximized)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Width)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Height)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Autosize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gradient)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NotificationId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NotificationText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BackgroundColor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BackgroundImage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TextColor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Maximized)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Width)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Height)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Autosize)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gradient)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -61,6 +61,7 @@
     </ApplicationDefinition>
     <Compile Include="Models\LogEntry.cs" />
     <Compile Include="Utilities\Logs.cs" />
+    <Compile Include="Utilities\OfflineMode.cs" />
     <Page Include="Info.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -83,7 +84,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Notificarion.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Parameters.cs" />
     <Compile Include="Models\RunningTimers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

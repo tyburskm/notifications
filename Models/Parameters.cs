@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Notifications.Models
 {
+    [Serializable]
     public class Parameters
     {
         public string Title { get; set; }
@@ -17,5 +18,6 @@ namespace Notifications.Models
         public int Width { get; set; }
         public int Height { get; set; }
         public bool Autosize { get; set; }
+        public string Gradient { get; set; }
     }
 }

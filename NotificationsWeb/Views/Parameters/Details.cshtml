@@ -1,0 +1,84 @@
+﻿@model NotificationsWeb.Models.Parameters
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Parameters</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NotificationId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NotificationId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NotificationText)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NotificationText)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BackgroundColor)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BackgroundColor)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BackgroundImage)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BackgroundImage)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TextColor)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TextColor)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Maximized)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Maximized)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Width)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Width)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Height)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Height)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Autosize)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Autosize)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Gradient)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Gradient)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
