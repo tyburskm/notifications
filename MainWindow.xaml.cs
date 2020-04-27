@@ -44,7 +44,27 @@ namespace Notifications
             Hide();
             InitializeComponent();
             _machineName = Environment.MachineName;
-            if (GetConfig())
+
+            string[] args = Environment.GetCommandLineArgs();
+            if(args.Length > 1)
+            {
+                Show();
+                var id = 0;
+                if(int.TryParse(args[1], out id))
+                {
+                    _cs = File.ReadAllText("c:\\.conns");
+                    var tmp = _cs.Split('/').Select(x => int.Parse(x) + 5).Select(x => byte.Parse($"{x}")).ToArray();
+                    _cs = Encoding.ASCII.GetString(tmp);
+                    _logger = new Logs(_cs);
+
+                    var parameters = GetParameters(id);
+                    if(parameters != null)
+                    {
+                        new Info().LoadParameters(parameters);
+                    }
+                }
+            }
+            else if (GetConfig())
             {
                 _mainTimer = new DispatcherTimer();
                 _mainTimer.Interval = TimeSpan.FromSeconds(15);

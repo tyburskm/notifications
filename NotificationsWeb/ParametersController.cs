@@ -45,9 +45,12 @@ namespace NotificationsWeb
         }
 
         // GET: Parameters/Create
-        public IActionResult Create()
+        public IActionResult Create(int? nId)
         {
-            ViewData["NotificationId"] = new SelectList(_context.Notifications, "Id", "Name");
+            if (nId == null)
+                ViewData["NotificationId"] = new SelectList(_context.Notifications, "Id", "Name");
+            else
+                ViewData["NotificationId"] = new SelectList(_context.Notifications.Where(x=>x.Id == nId), "Id", "Name");
             return View();
         }
 
@@ -81,7 +84,7 @@ namespace NotificationsWeb
             {
                 return NotFound();
             }
-            ViewData["NotificationId"] = new SelectList(_context.Notifications, "Id", "Name", parameters.NotificationId);
+            ViewData["NotificationId"] = new SelectList(_context.Notifications.Where(x=>x.Id == parameters.NotificationId), "Id", "Name", parameters.NotificationId);
             return View(parameters);
         }
 
