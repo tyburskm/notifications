@@ -21,6 +21,7 @@ namespace NotificationsWeb
         // GET: Notifications
         public async Task<IActionResult> Index()
         {
+            ViewBag.MissingParameters =_context.Notifications.Where(x => !x.Parameters.Any()).Select(x=>x.Id).ToList();
             return View(await _context.Notifications.ToListAsync());
         }
 
@@ -42,6 +43,29 @@ namespace NotificationsWeb
             return View(notifications);
         }
 
+        public async Task<IActionResult> EditParameters(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var parameterId = await _context.Parameters
+                .FirstOrDefaultAsync(x=>x.NotificationId == id);
+
+            if (parameterId != null)
+            {
+                return RedirectToAction("Edit", nameof(Parameters), new { Id = parameterId.Id});
+            }
+            else
+            {
+                return RedirectToAction("Create", nameof(Parameters), new { nId = id });
+            }
+
+            //return View(notifications);
+        }
+
+
         // GET: Notifications/Create
         public IActionResult Create()
         {
@@ -53,7 +77,7 @@ namespace NotificationsWeb
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ValidFrom,ValidTo,Repeat")] Notifications notifications)
+        public async Task<IActionResult> Create([Bind("Id,Name,ValidFrom,ValidTo,Repeat,RunAtTime")] Notifications notifications)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +109,7 @@ namespace NotificationsWeb
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ValidFrom,ValidTo,Repeat")] Notifications notifications)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ValidFrom,ValidTo,Repeat,RunAtTime")] Notifications notifications)
         {
             if (id != notifications.Id)
             {

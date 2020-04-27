@@ -15,5 +15,7 @@ namespace Notifications.Models
         public DateTime ValidTo { get; set; }
         public int Repeat { get; set; }
         public Parameters Parameters { get; set; }
+        public DateTime? RunAtTime { get; set; }
+        public string[] PcList { get; set; }
     }
 }

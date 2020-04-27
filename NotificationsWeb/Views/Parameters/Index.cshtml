@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.NotificationId)
+                @Html.DisplayNameFor(model => model.Notification)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Title)
@@ -22,28 +22,7 @@
                 @Html.DisplayNameFor(model => model.NotificationText)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BackgroundColor)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.BackgroundImage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TextColor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Maximized)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Width)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Height)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Autosize)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Gradient)
             </th>
             <th></th>
         </tr>
@@ -52,7 +31,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.NotificationId)
+                @Html.DisplayFor(modelItem => item.Notification.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -61,29 +40,9 @@
                 @Html.DisplayFor(modelItem => item.NotificationText)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BackgroundColor)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.BackgroundImage)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TextColor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Maximized)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Width)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Height)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Autosize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gradient)
-            </td>
+
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

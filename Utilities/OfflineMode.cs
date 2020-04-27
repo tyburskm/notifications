@@ -27,6 +27,19 @@ namespace Notifications.Utilities
                         }
                     }
                     catch { }
+
+                    try
+                    {
+                        foreach (var file in Directory.GetFiles("c:\\temp\\", ".n_it_*_p_*", SearchOption.TopDirectoryOnly))
+                        {
+                            var tmp = new FileInfo(file);
+                            if (tmp.CreationTime.AddDays(14) < DateTime.Now)
+                            {
+                                File.Delete(file);
+                            }
+                        }
+                    }
+                    catch { }
                 }
 
                 WriteToBinaryFile(notificarions);

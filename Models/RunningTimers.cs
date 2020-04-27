@@ -11,5 +11,6 @@ namespace Notifications.Models
     {
         public DispatcherTimer Timer { get; set; }
         public int NotificationId { get; set; }
+        public DateTime LastRunDate { get; set; }
     }
 }

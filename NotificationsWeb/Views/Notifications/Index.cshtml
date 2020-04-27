@@ -13,6 +13,9 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
@@ -24,6 +27,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Repeat)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RunAtTime)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -31,20 +37,26 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
+            <td class="@(item.ValidFrom > DateTime.Now ? "red" : "green")">
                 @Html.DisplayFor(modelItem => item.ValidFrom)
             </td>
-            <td>
+            <td class="@(item.ValidTo < DateTime.Now ? "red" : "green")">
                 @Html.DisplayFor(modelItem => item.ValidTo)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Repeat)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.RunAtTime)
+            </td>
+            <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a class="@( ViewBag.MissingParameters.Contains(item.Id) ? "red-forecolor" : "")" asp-action="EditParameters" asp-route-id="@item.Id">Parameters</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>

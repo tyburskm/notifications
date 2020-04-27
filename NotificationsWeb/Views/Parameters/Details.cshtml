@@ -11,12 +11,6 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NotificationId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NotificationId)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
         <dd class = "col-sm-10">
@@ -75,6 +69,12 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Gradient)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Notification)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Notification.Name)
         </dd>
     </dl>
 </div>

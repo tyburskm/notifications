@@ -92,6 +92,11 @@ namespace Notifications
                 NotificationText.Text = parameters.NotificationText;
             }
 
+            if(parameters.TextColor.Length > 0)
+            {
+                var rgb = parameters.TextColor.Split(';').Select(x => byte.Parse(x)).ToArray();
+                NotificationText.Foreground = new SolidColorBrush(Color.FromRgb(rgb[0], rgb[1], rgb[2]));
+            }
             
 
             Show();
