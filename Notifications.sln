@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications", "Notificati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationsWeb", "NotificationsWeb\NotificationsWeb.csproj", "{A06B1948-671A-4650-92A8-D5374B3D2EFD}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DB", "..\DB\DB.sqlproj", "{A956AD93-F0A8-4F40-B47E-96C5084010BD}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DB", "DB\DB.sqlproj", "{A956AD93-F0A8-4F40-B47E-96C5084010BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
