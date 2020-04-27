@@ -15,21 +15,35 @@ namespace NotificationsWeb.Models
         {
         }
 
+        public virtual DbSet<Groups> Groups { get; set; }
         public virtual DbSet<Logs> Logs { get; set; }
+        public virtual DbSet<NotificationInGroup> NotificationInGroup { get; set; }
         public virtual DbSet<Notifications> Notifications { get; set; }
         public virtual DbSet<Parameters> Parameters { get; set; }
+        public virtual DbSet<PcInGroup> PcInGroup { get; set; }
+        public virtual DbSet<Pcs> Pcs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=hutisd0kwisql70;Database=notifications;Trusted_Connection=True;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=hutisd0kwisql70;Initial Catalog=notifications;Persist Security Info=False;User ID=notifuser;Password=notifuser123;Connection Timeout=30;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+
+            modelBuilder.Entity<Groups>(entity =>
+            {
+                entity.Property(e => e.Description).HasMaxLength(500);
+
+                entity.Property(e => e.GroupName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
 
             modelBuilder.Entity<Logs>(entity =>
             {
@@ -48,11 +62,28 @@ namespace NotificationsWeb.Models
                     .HasMaxLength(20);
             });
 
+            modelBuilder.Entity<NotificationInGroup>(entity =>
+            {
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.NotificationInGroup)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_NotificationInGroup_Groups");
+
+                entity.HasOne(d => d.Notification)
+                    .WithMany(p => p.NotificationInGroup)
+                    .HasForeignKey(d => d.NotificationId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_NotificationInGroup_Notifications");
+            });
+
             modelBuilder.Entity<Notifications>(entity =>
             {
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(200);
+
+                entity.Property(e => e.RunAtTime).HasColumnType("datetime");
 
                 entity.Property(e => e.ValidFrom)
                     .HasColumnType("datetime")
@@ -85,6 +116,32 @@ namespace NotificationsWeb.Models
                     .HasForeignKey(d => d.NotificationId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Parameters_Notifications");
+            });
+
+            modelBuilder.Entity<PcInGroup>(entity =>
+            {
+                entity.Property(e => e.Pcid).HasColumnName("PCId");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.PcInGroup)
+                    .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PcInGroup_Groups");
+
+                entity.HasOne(d => d.Pc)
+                    .WithMany(p => p.PcInGroup)
+                    .HasForeignKey(d => d.Pcid)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PcInGroup_PCs");
+            });
+
+            modelBuilder.Entity<Pcs>(entity =>
+            {
+                entity.ToTable("PCs");
+
+                entity.Property(e => e.PcName)
+                    .IsRequired()
+                    .HasMaxLength(50);
             });
         }
     }

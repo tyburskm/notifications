@@ -96,8 +96,8 @@ namespace NotificationsWeb
             {
                 try
                 {
-                    //_context.Update(logs);
-                    //await _context.SaveChangesAsync();
+                    _context.Update(logs);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -139,8 +139,8 @@ namespace NotificationsWeb
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var logs = await _context.Logs.FindAsync(id);
-            //_context.Logs.Remove(logs);
-            //await _context.SaveChangesAsync();
+            _context.Logs.Remove(logs);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

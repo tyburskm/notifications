@@ -9,22 +9,23 @@ using NotificationsWeb.Models;
 
 namespace NotificationsWeb
 {
-    public class NotificationsController : Controller
+    public class PcInGroupsController : Controller
     {
         private readonly notificationsContext _context;
 
-        public NotificationsController(notificationsContext context)
+        public PcInGroupsController(notificationsContext context)
         {
             _context = context;
         }
 
-        // GET: Notifications
+        // GET: PcInGroups
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Notifications.ToListAsync());
+            var notificationsContext = _context.PcInGroup.Include(p => p.Group).Include(p => p.Pc);
+            return View(await notificationsContext.ToListAsync());
         }
 
-        // GET: Notifications/Details/5
+        // GET: PcInGroups/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +33,45 @@ namespace NotificationsWeb
                 return NotFound();
             }
 
-            var notifications = await _context.Notifications
+            var pcInGroup = await _context.PcInGroup
+                .Include(p => p.Group)
+                .Include(p => p.Pc)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (notifications == null)
+            if (pcInGroup == null)
             {
                 return NotFound();
             }
 
-            return View(notifications);
+            return View(pcInGroup);
         }
 
-        // GET: Notifications/Create
+        // GET: PcInGroups/Create
         public IActionResult Create()
         {
+            ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "GroupName");
+            ViewData["Pcid"] = new SelectList(_context.Pcs, "Id", "PcName");
             return View();
         }
 
-        // POST: Notifications/Create
+        // POST: PcInGroups/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ValidFrom,ValidTo,Repeat,RunAtTime")] Notifications notifications)
+        public async Task<IActionResult> Create([Bind("Id,GroupId,Pcid")] PcInGroup pcInGroup)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(notifications);
+                _context.Add(pcInGroup);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(notifications);
+            ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "GroupName", pcInGroup.GroupId);
+            ViewData["Pcid"] = new SelectList(_context.Pcs, "Id", "PcName", pcInGroup.Pcid);
+            return View(pcInGroup);
         }
 
-        // GET: Notifications/Edit/5
+        // GET: PcInGroups/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +79,24 @@ namespace NotificationsWeb
                 return NotFound();
             }
 
-            var notifications = await _context.Notifications.FindAsync(id);
-            if (notifications == null)
+            var pcInGroup = await _context.PcInGroup.FindAsync(id);
+            if (pcInGroup == null)
             {
                 return NotFound();
             }
-            return View(notifications);
+            ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "GroupName", pcInGroup.GroupId);
+            ViewData["Pcid"] = new SelectList(_context.Pcs, "Id", "PcName", pcInGroup.Pcid);
+            return View(pcInGroup);
         }
 
-        // POST: Notifications/Edit/5
+        // POST: PcInGroups/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ValidFrom,ValidTo,Repeat,RunAtTime")] Notifications notifications)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,GroupId,Pcid")] PcInGroup pcInGroup)
         {
-            if (id != notifications.Id)
+            if (id != pcInGroup.Id)
             {
                 return NotFound();
             }
@@ -96,12 +105,12 @@ namespace NotificationsWeb
             {
                 try
                 {
-                    _context.Update(notifications);
+                    _context.Update(pcInGroup);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!NotificationsExists(notifications.Id))
+                    if (!PcInGroupExists(pcInGroup.Id))
                     {
                         return NotFound();
                     }
@@ -112,10 +121,12 @@ namespace NotificationsWeb
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(notifications);
+            ViewData["GroupId"] = new SelectList(_context.Groups, "Id", "GroupName", pcInGroup.GroupId);
+            ViewData["Pcid"] = new SelectList(_context.Pcs, "Id", "PcName", pcInGroup.Pcid);
+            return View(pcInGroup);
         }
 
-        // GET: Notifications/Delete/5
+        // GET: PcInGroups/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,30 +134,32 @@ namespace NotificationsWeb
                 return NotFound();
             }
 
-            var notifications = await _context.Notifications
+            var pcInGroup = await _context.PcInGroup
+                .Include(p => p.Group)
+                .Include(p => p.Pc)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (notifications == null)
+            if (pcInGroup == null)
             {
                 return NotFound();
             }
 
-            return View(notifications);
+            return View(pcInGroup);
         }
 
-        // POST: Notifications/Delete/5
+        // POST: PcInGroups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var notifications = await _context.Notifications.FindAsync(id);
-            _context.Notifications.Remove(notifications);
+            var pcInGroup = await _context.PcInGroup.FindAsync(id);
+            _context.PcInGroup.Remove(pcInGroup);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool NotificationsExists(int id)
+        private bool PcInGroupExists(int id)
         {
-            return _context.Notifications.Any(e => e.Id == id);
+            return _context.PcInGroup.Any(e => e.Id == id);
         }
     }
 }

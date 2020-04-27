@@ -47,7 +47,7 @@ namespace Notifications
             if (GetConfig())
             {
                 _mainTimer = new DispatcherTimer();
-                _mainTimer.Interval = TimeSpan.FromSeconds(10);
+                _mainTimer.Interval = TimeSpan.FromSeconds(15);
                 _mainTimer.Tick += _mainTimer_Tick;
                 _runningTimers = new List<RunningTimers>();
                 _mainTimer.Start();
@@ -71,7 +71,7 @@ namespace Notifications
             {
                 _mainTimer.IsEnabled = false;
 
-                if (_errorCount >= 10)
+                if (_errorCount >= 50)
                 {
                     foreach (var runningTimer in _runningTimers)
                     {
@@ -111,21 +111,38 @@ namespace Notifications
                         {
                             var notificationParams = notification.Parameters?? GetParameters(notification.Id);
                             if (notificationParams == null)
-                                continue;
+                                continue; //skip not configured properly
+
+                            var pcList = notification.PcList ?? GetPcs(notification.Id);
+                            if (notification != null)
+                            {
+                                if (!pcList.Any(x => x == "*"))
+                                {
+                                    if (!pcList.Any(x => _machineName.ToLower().Contains(x.ToLower())))
+                                    {
+                                        continue; //skip not listed
+                                    }
+                                }
+                            }
 
                             if (notification.Repeat > 0)
                             {
                                 var taskRunner = new DispatcherTimer();
                                 taskRunner.Interval = TimeSpan.FromMinutes(notification.Repeat);
 #if DEBUG
-                                taskRunner.Interval = TimeSpan.FromSeconds(20);
+                                //taskRunner.Interval = TimeSpan.FromSeconds(20);
 #endif
-                                taskRunner.Tick += (o, args) => { new Info().LoadParameters(notificationParams); };
+                                if(notification.RunAtTime != null)
+                                    taskRunner.Tick += (o, args) => { RunAtSpecificTime(notificationParams, notification.Id, notification.RunAtTime.Value); };
+                                else
+                                    taskRunner.Tick += (o, args) => { new Info().LoadParameters(notificationParams); };
+
                                 taskRunner.Start();
                                 _runningTimers.Add(new RunningTimers()
                                 {
                                     Timer = taskRunner,
-                                    NotificationId = notification.Id
+                                    NotificationId = notification.Id,
+                                    LastRunDate = DateTime.Now.AddDays(-1)
                                 });
 
                             }
@@ -144,8 +161,8 @@ namespace Notifications
                                     app.Write($"{notification.Id};");
                                 }
                             }
-
-                            new Info().LoadParameters(notificationParams);
+                            if(notification.RunAtTime == null)
+                                new Info().LoadParameters(notificationParams);
                         }
                     }
                 }
@@ -211,8 +228,6 @@ namespace Notifications
                 {
                     _logger.LogEvent(_machineName, "Cannot connect to the database", EventLogEntryType.Error, true);
                     _offlineMode = true;
-
-
                 }
 
                 return true;
@@ -248,13 +263,13 @@ namespace Notifications
             _onlineStatusTimer.Enabled = true;
         }
 
-        private IEnumerable<Models.Notification> GetNotifications()
+        private IEnumerable<Notification> GetNotifications()
         {
             try
             {
                 if (_offlineMode)
                 {
-                    return new OfflineMode().GetNotifications();
+                    return new OfflineMode().GetNotifications().Where(x=>x.ValidTo > DateTime.Now).ToArray();
                 }
                 else
                 {
@@ -268,7 +283,8 @@ namespace Notifications
                             Name = x.Field<string>("Name"),
                             ValidFrom = x.Field<DateTime>("ValidFrom"),
                             ValidTo = x.Field<DateTime>("ValidTo"),
-                            Repeat = x.Field<int>("Repeat")
+                            Repeat = x.Field<int>("Repeat"),
+                            RunAtTime = x.Field<DateTime?>("RunAtTime")
                         });
 
                         if (_firstRun)
@@ -276,6 +292,7 @@ namespace Notifications
                             results = results.Select((x) =>
                             {
                                 x.Parameters = GetParameters(x.Id);
+                                x.PcList = GetPcs(x.Id);
                                 return x;
                             });
                             new OfflineMode().SaveLocally(results.ToArray());
@@ -333,6 +350,43 @@ namespace Notifications
                 _errorCount++;
                 return null;
             }
+        }
+
+        private string[] GetPcs(int notificationId)
+        {
+            try
+            {
+                var db = new DatabaseHandler(_cs);
+                var data = db.GetData("sp_GetPcList", null, new[] { new SqlParameter("@NotificationId", notificationId) });
+                if (data.Rows.Count > 0)
+                {
+                    return data.AsEnumerable().Select(x => x.Field<string>("PcName")).ToArray();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogEvent(_machineName, $"Cannot get pc list due to {e.Message}", EventLogEntryType.Warning);
+                _errorCount++;
+                return null;
+            }
+        }
+
+        public void RunAtSpecificTime(Parameters parameters, int notificationId, DateTime runAtTime)
+        {
+            var runningNotification = _runningTimers.First(x => x.NotificationId == notificationId);
+            if(runningNotification.LastRunDate.Date < DateTime.Now.Date)
+            {
+                if(runAtTime.TimeOfDay >= DateTime.Now.AddMinutes(-1).TimeOfDay && runAtTime.TimeOfDay <= DateTime.Now.AddMinutes(1).TimeOfDay)
+                {
+                    new Info().LoadParameters(parameters);
+                    runningNotification.LastRunDate = DateTime.Now;
+                }
+            }
+            
         }
     }
 }

@@ -7,6 +7,7 @@ namespace NotificationsWeb.Models
     {
         public Notifications()
         {
+            NotificationInGroup = new HashSet<NotificationInGroup>();
             Parameters = new HashSet<Parameters>();
         }
 
@@ -15,7 +16,9 @@ namespace NotificationsWeb.Models
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
         public int Repeat { get; set; }
+        public DateTime? RunAtTime { get; set; }
 
+        public virtual ICollection<NotificationInGroup> NotificationInGroup { get; set; }
         public virtual ICollection<Parameters> Parameters { get; set; }
     }
 }

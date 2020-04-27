@@ -13,9 +13,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.NotificationId)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
@@ -45,15 +42,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.Gradient)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Notification)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NotificationId)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
@@ -83,6 +80,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Gradient)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Notification.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

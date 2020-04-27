@@ -9,22 +9,22 @@ using NotificationsWeb.Models;
 
 namespace NotificationsWeb
 {
-    public class NotificationsController : Controller
+    public class PcsController : Controller
     {
         private readonly notificationsContext _context;
 
-        public NotificationsController(notificationsContext context)
+        public PcsController(notificationsContext context)
         {
             _context = context;
         }
 
-        // GET: Notifications
+        // GET: Pcs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Notifications.ToListAsync());
+            return View(await _context.Pcs.ToListAsync());
         }
 
-        // GET: Notifications/Details/5
+        // GET: Pcs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +32,39 @@ namespace NotificationsWeb
                 return NotFound();
             }
 
-            var notifications = await _context.Notifications
+            var pcs = await _context.Pcs
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (notifications == null)
+            if (pcs == null)
             {
                 return NotFound();
             }
 
-            return View(notifications);
+            return View(pcs);
         }
 
-        // GET: Notifications/Create
+        // GET: Pcs/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Notifications/Create
+        // POST: Pcs/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ValidFrom,ValidTo,Repeat,RunAtTime")] Notifications notifications)
+        public async Task<IActionResult> Create([Bind("Id,PcName")] Pcs pcs)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(notifications);
+                _context.Add(pcs);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(notifications);
+            return View(pcs);
         }
 
-        // GET: Notifications/Edit/5
+        // GET: Pcs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +72,22 @@ namespace NotificationsWeb
                 return NotFound();
             }
 
-            var notifications = await _context.Notifications.FindAsync(id);
-            if (notifications == null)
+            var pcs = await _context.Pcs.FindAsync(id);
+            if (pcs == null)
             {
                 return NotFound();
             }
-            return View(notifications);
+            return View(pcs);
         }
 
-        // POST: Notifications/Edit/5
+        // POST: Pcs/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ValidFrom,ValidTo,Repeat,RunAtTime")] Notifications notifications)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PcName")] Pcs pcs)
         {
-            if (id != notifications.Id)
+            if (id != pcs.Id)
             {
                 return NotFound();
             }
@@ -96,12 +96,12 @@ namespace NotificationsWeb
             {
                 try
                 {
-                    _context.Update(notifications);
+                    _context.Update(pcs);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!NotificationsExists(notifications.Id))
+                    if (!PcsExists(pcs.Id))
                     {
                         return NotFound();
                     }
@@ -112,10 +112,10 @@ namespace NotificationsWeb
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(notifications);
+            return View(pcs);
         }
 
-        // GET: Notifications/Delete/5
+        // GET: Pcs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,30 +123,30 @@ namespace NotificationsWeb
                 return NotFound();
             }
 
-            var notifications = await _context.Notifications
+            var pcs = await _context.Pcs
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (notifications == null)
+            if (pcs == null)
             {
                 return NotFound();
             }
 
-            return View(notifications);
+            return View(pcs);
         }
 
-        // POST: Notifications/Delete/5
+        // POST: Pcs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var notifications = await _context.Notifications.FindAsync(id);
-            _context.Notifications.Remove(notifications);
+            var pcs = await _context.Pcs.FindAsync(id);
+            _context.Pcs.Remove(pcs);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool NotificationsExists(int id)
+        private bool PcsExists(int id)
         {
-            return _context.Notifications.Any(e => e.Id == id);
+            return _context.Pcs.Any(e => e.Id == id);
         }
     }
 }
