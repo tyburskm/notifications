@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace NotificationsWeb.Models
 {
@@ -25,11 +26,12 @@ namespace NotificationsWeb.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=hutisd0kwisql70;Initial Catalog=notifications;Persist Security Info=False;User ID=notifuser;Password=notifuser123;Connection Timeout=30;");
-            }
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json")
+            .Build();
+             optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

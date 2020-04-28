@@ -31,7 +31,7 @@ namespace NotificationsWeb
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<NotificationsWeb.Models.notificationsContext>(options => options.UseSqlServer("Server=hutisd0kwisql70;Initial Catalog=notifications;Persist Security Info=False;User ID=notifuser;Password=notifuser123;Connection Timeout=30;"));
+            services.AddDbContext<NotificationsWeb.Models.notificationsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
